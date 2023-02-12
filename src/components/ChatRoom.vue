@@ -8,10 +8,10 @@
         </div>
     </div>
     <div v-if="joined" >
-        <!-- <div class="nameContainer">
+        <div class="nameContainer">
             <p>{{currentUser}} Joined</p>
             <button class="signOutBtn" @click="signOut">SignOut</button>
-        </div> -->
+        </div>
 
         <div class="messagesC">
             <div v-for="message in messages" :key="message.id">
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import io from "socket.io-client"
 export default {
     name: "ChatRoom",
     data() {
@@ -50,14 +51,35 @@ export default {
     methods: {
         join() {
             this.joined = true
+            this.socketInstance =  io("http://localhost:3000")
+
+            this.socketInstance.on(
+                "message:received", (message) => {
+                this.messages.push(message)
+                }
+            
+            
+            )
         },
         signOut() {
             this.joined = false
             this.currentUser = ""
+
         },
         sendMessage() {
-console.log("asd");
+            this.addMessage()
+            this.text = ""
+        },
+        addMessage() {
+            const message = {
+                id: new Date().getTime(),
+                text: this.text,
+                user: this.currentUser
+            }
+            this.messages.push(message)
+            this.socketInstance.emit("message", message)
         }
+
     }
 }
 </script>
