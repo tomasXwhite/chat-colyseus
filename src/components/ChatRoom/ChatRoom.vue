@@ -14,11 +14,10 @@
 
   <div v-if="joined">
     <div class="signedNameContainer">
-      <p>Joined as '{{ currentUser }}' on room -{{ room.id }}-</p>
+      <p>Joined as '{{ currentUser }}' on room -{{ room ? room.id : null }}-</p>
       <button class="signOutBtn" @click="signOut">SignOut</button>
     </div>
     <div class="chat-container">
-      <!-- <div class="chat-message"> -->
       <div
         v-for="message in messages"
         :key="message.id"
@@ -33,7 +32,6 @@
         <b class="username" v-else>You :</b>
         {{ message.text }}
       </div>
-      <!-- </div> -->
       <div class="inputAndBtn">
         <input
           type="text"
@@ -41,16 +39,18 @@
           class="chat-input"
           v-on:keyup.enter="sendMessage"
         />
-        <!-- </input> -->
         <button class="chat-button" @click="sendMessage">Send</button>
       </div>
     </div>
 
     <div class="connectedUsersC">
       <ul class="list">
-        Users connected:
+        Users activity in the room:
         <li class="list-item" v-for="user in connectedUsers" :key="user">
           `{{ user }}` Connected to the server
+        </li>
+        <li class="list-item" v-for="user in discconnectedUsers" :key="user">
+          `{{ user }}` left from the server
         </li>
       </ul>
     </div>
@@ -72,6 +72,7 @@ export default {
       client: null,
       messages: [],
       connectedUsers: [],
+      disconnectedUsers: [],
       availableRooms: [],
     };
   },
@@ -117,6 +118,7 @@ export default {
     signOut() {
       this.joined = false;
       this.currentUser = "";
+      this.room.leave();
     },
     sendMessage() {
       this.addMessage();
@@ -162,7 +164,7 @@ export default {
     },
     async handleDisconnectedUsers() {
       if (this.room) {
-        await this.room.onMessage("left", ({ username }) => {
+        await this.room.onMessage("left", (username) => {
           console.log(username);
           this.connectedUsers.filter((u) => u === username);
         });
