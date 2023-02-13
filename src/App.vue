@@ -1,8 +1,4 @@
 <template>
-  <!-- <div class="title">
-
-    <img alt="Vue logo" src="./assets/logo.png"> <h1 class="titleText">Vue+sockets Chat</h1>
-  </div> -->
   <ChatRoom></ChatRoom>
 </template>
 
