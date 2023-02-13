@@ -49,31 +49,18 @@ export default {
       currentUser: "",
       text: "",
       room: null,
-      messages: [
-        {
-          id: 1,
-          text: "hi men",
-          user: "manoj",
-        },
-      ],
+      messages: [],
     };
   },
   methods: {
     async join() {
       this.joined = true;
-      // this.socketInstance = io("http://localhost:3000");
-      //   this.socketInstance.on("message:received", (message) => {
-      //     this.messages.push(message);
-      //   });
       try {
         console.log(Client);
-        // var host = window.document.location.host.replace(/:.*/, "");
-        // console.log(host);
+        var host = window.document.location.host.replace(/:.*/, "");
         var client = new Client(
-          //   location.protocol.replace("http", "ws") + "//" + host + ":8001"
-          "ws://localhost:8001"
+          location.protocol.replace("http", "ws") + "//" + host + ":8001"
         );
-        // console.log(client);
         const self = this;
         this.room = await client.joinOrCreate("chatRoom");
         // client.getAvailableRooms().then((data) => console.log(data));
